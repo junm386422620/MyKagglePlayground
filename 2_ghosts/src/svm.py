@@ -32,9 +32,10 @@ type_id = df_train.type_id
 df_train = df_train.drop(['type', 'type_id', 'color', 'color_id'], axis=1) 
 df_test = df_test.drop(['color', 'color_id'], axis=1) 
 
-# RF Learn
+# Learn
 from sklearn import svm
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 
 train_data = df_train.values
 test_data = df_test.values
@@ -44,7 +45,11 @@ train_target = type_id.values
 Xtrain, Xtest, ytrain, ytest = train_test_split(train_data[:, 1:], train_target, \
     test_size = 0.2, random_state = 36)
 
-svc = svm.SVC(kernel = 'linear')
+parameters = {'kernel':['linear', 'sigmoid', 'poly', 'rbf'], 'gamma':np.linspace(0.0,2.0,num=21),'C': np.linspace(0.5,1.5,num=11)}
+svc = GridSearchCV(svm.SVC(), parameters)
+
+#svc = svm.SVC(kernel = 'linear')
+
 svc.fit(Xtrain, ytrain)
 
 print 'val accuracy:'
